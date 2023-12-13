@@ -9,6 +9,8 @@ public class YandexGames : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern bool SDKInit();
+    [DllImport("__Internal")]
+    private static extern bool PlayerInit();
 
     [DllImport("__Internal")]
     private static extern bool AuthCheck();
@@ -20,7 +22,7 @@ public class YandexGames : MonoBehaviour
     private static extern void SaveToLb(int score);
 
     public static YandexGames Instance { get; private set; }
-    public static bool IsInit { get; private set; }
+    public static bool IsSDKInit { get; private set; }
     public static bool IsRus { get; private set; }
     public static bool IsAuth { get; private set; }
 
@@ -54,7 +56,7 @@ public class YandexGames : MonoBehaviour
 
     public void SaveToLeaderboard(int score)
     {
-        if (Application.isEditor || !IsInit || !IsAuth) return;
+        if (Application.isEditor || !IsAuth) return;
         SaveToLb(score);
         Debug.Log("Saved to lb: " + score.ToString());
     }
@@ -63,11 +65,13 @@ public class YandexGames : MonoBehaviour
     {
         yield return new WaitForSeconds(1.0f);
         while (!SDKInit()) yield return new WaitForSeconds(0.3f);
-        IsInit = true;
+        IsSDKInit = true;
         IsRus = RusLangDomens.Contains(GetLang());
         Debug.Log("IsRus: " + IsRus.ToString());
 
-        yield return new WaitForSeconds(2f);
+        while (!PlayerInit()) yield return new WaitForSeconds(0.3f);
+
+        yield return new WaitForSeconds(1f);
         IsAuth = AuthCheck();
         Debug.Log("IsAuth: " + IsAuth.ToString());
     }

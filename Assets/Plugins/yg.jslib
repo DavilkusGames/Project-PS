@@ -8,6 +8,15 @@
     }
   },
 
+  PlayerInit: function () {
+    if (typeof player === 'undefined') {
+        return false;
+    }
+    else {
+        return true;
+    }
+  },
+
   AuthCheck: function () {
     if (player.getMode() === 'lite') {
        return false; 
@@ -26,6 +35,6 @@
   },
 
   SaveToLb : function (score) {
-    lb.setLeaderboardScore('diamondCount', score);
+    lb.setLeaderboardScore('scoreLB', score);
   },
 });
